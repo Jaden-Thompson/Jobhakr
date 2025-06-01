@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>How It Works – JobHackr AI Resume Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Orbitron font for cyberpunk style -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #0a001a;
+      color: #fff;
+      font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+      scroll-behavior: smooth;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      box-sizing: border-box;
+    }
+    .sidebar {
+      position: sticky;
+      top: 2rem;
+      align-self: flex-start;
+      min-width: 210px;
+      max-width: 240px;
+      background: rgba(10,0,26,0.92);
+      border: 2px solid #00fff7;
+      border-radius: 1.5rem;
+      box-shadow: 0 0 24px #ff00ea44, 0 0 8px #00fff7;
+      margin: 2.5rem 2rem 2.5rem 2rem;
+      padding: 2rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      z-index: 10;
+      transition: box-shadow 0.2s;
+      height: fit-content;
+    }
+    .sidebar h2 {
+      font-size: 1.1rem;
+      color: #ff00ea;
+      margin: 0 0 1.2rem 0;
+      letter-spacing: 0.04em;
+      text-shadow: 0 0 8px #00fff7cc;
+      text-align: left;
+    }
+    .toc-link {
+      color: #00fff7;
+      text-decoration: none;
+      font-size: 1.08rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      display: block;
+      transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+      outline: none;
+    }
+    .toc-link.active,
+    .toc-link:focus,
+    .toc-link:hover {
+      background: linear-gradient(90deg, #ff00ea33 0%, #00fff733 100%);
+      color: #ff00ea;
+      box-shadow: 0 0 12px #00fff7, 0 0 24px #ff00ea;
+      text-shadow: 0 0 8px #00fff7cc;
+    }
+    .main-content {
+      flex: 1;
+      max-width: 700px;
+      margin: 2.5rem 1rem 2.5rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+    }
+    .step-section {
+      background: rgba(10,0,26,0.92);
+      border: 2px solid #00fff7;
+      border-radius: 2rem;
+      box-shadow: 0 0 32px #ff00ea44, 0 0 8px #00fff7;
+      padding: 2.5rem 2rem 2.5rem 2rem;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 2rem;
+      position: relative;
+      scroll-margin-top: 2rem;
+    }
+    .step-number {
+      min-width: 70px;
+      min-height: 70px;
+      background: linear-gradient(135deg, #ff00ea 0%, #00fff7 100%);
+      color: #0a001a;
+      font-size: 2.2rem;
+      font-weight: 900;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 24px #ff00ea88, 0 0 16px #00fff7;
+      margin-right: 1.2rem;
+      flex-shrink: 0;
+      text-shadow: 0 0 8px #fff;
+      border: 3px solid #fff2;
+      animation: neonPulse 2.5s infinite;
+    }
+    @keyframes neonPulse {
+      0% { box-shadow: 0 0 24px #ff00ea88, 0 0 16px #00fff7; }
+      50% { box-shadow: 0 0 48px #00fff7, 0 0 32px #ff00ea; }
+      100% { box-shadow: 0 0 24px #ff00ea88, 0 0 16px #00fff7; }
+    }
+    .step-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+    .step-title {
+      font-size: 1.4rem;
+      color: #ff00ea;
+      margin: 0 0 0.3rem 0;
+      letter-spacing: 0.04em;
+      text-shadow: 0 0 8px #00fff7cc;
+    }
+    .step-desc {
+      font-size: 1.08rem;
+      color: #fff;
+      margin: 0 0 0.5rem 0;
+      letter-spacing: 0.02em;
+      line-height: 1.6;
+      text-shadow: 0 0 8px #00fff722;
+    }
+    .step-icon {
+      font-size: 2.2rem;
+      margin-bottom: 0.2rem;
+      color: #00fff7;
+      text-shadow: 0 0 12px #ff00ea88;
+      align-self: flex-start;
+    }
+    /* Responsive styles */
+    @media (max-width: 1100px) {
+      .sidebar { margin-left: 0.5rem; margin-right: 1rem; }
+      .main-content { margin-left: 0; }
+    }
+    @media (max-width: 900px) {
+      body { flex-direction: column; align-items: stretch; }
+      .sidebar {
+        position: static;
+        margin: 1.5rem auto 0 auto;
+        width: 95vw;
+        max-width: 98vw;
+        border-radius: 1.2rem;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.7rem;
+        padding: 1.2rem 0.5rem;
+      }
+      .main-content {
+        margin: 1.5rem auto 2.5rem auto;
+        max-width: 98vw;
+      }
+    }
+    @media (max-width: 700px) {
+      .step-section {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.2rem 0.7rem;
+        gap: 1rem;
+      }
+      .step-number {
+        margin-right: 0;
+        margin-bottom: 0.7rem;
+      }
+    }
+    /* Smooth highlight for active sidebar link */
+    .toc-link.active {
+      background: linear-gradient(90deg, #ff00ea55 0%, #00fff755 100%);
+      color: #fff;
+      box-shadow: 0 0 24px #00fff7, 0 0 32px #ff00ea;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top navigation bar: Place this at the very top of <body> -->
+  <nav style="
+    position: fixed;
+    top: 0; left: 0; width: 100vw; z-index: 1000;
+    background: rgba(10,0,26,0.96);
+    border-bottom: 2px solid #00fff7;
+    box-shadow: 0 0 16px #ff00ea44, 0 0 8px #00fff7;
+    display: flex; gap: 2rem; align-items: center; justify-content: center;
+    padding: 0.7rem 0 0.5rem 0;
+    font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+  ">
+    <a href="index.html" style="color:#ff00ea; text-decoration:none; font-weight:700; font-size:1.1rem; letter-spacing:0.04em; margin-right:1.5rem;">JobHackr</a>
+    <a href="generator.html" style="color:#00fff7; text-decoration:none; font-size:1.05rem; margin-right:1.2rem;">Generator</a>
+    <a href="how-it-works.html" style="color:#00fff7; text-decoration:none; font-size:1.05rem;">How It Works</a>
+  </nav>
+  <div style="height: 3.2rem;"></div> <!-- Spacer for nav -->
+
+  <nav class="sidebar" aria-label="How it works navigation">
+    <h2>How It Works</h2>
+    <a class="toc-link" href="#step1" id="toc-step1">1. Upload Resume / Info</a>
+    <a class="toc-link" href="#step2" id="toc-step2">2. Paste Job Description</a>
+    <a class="toc-link" href="#step3" id="toc-step3">3. Get Tailored Resume</a>
+    <a class="toc-link" href="#step4" id="toc-step4">4. Review &amp; Edit</a>
+    <a class="toc-link" href="#step5" id="toc-step5">5. Download or Apply</a>
+  </nav>
+  <main class="main-content">
+    <!-- Step 1 -->
+    <section class="step-section" id="step1" tabindex="-1" aria-labelledby="step1-title">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <span class="step-icon">📄</span>
+        <div class="step-title" id="step1-title">Upload Resume or Enter Info</div>
+        <div class="step-desc">
+          Start by uploading your existing resume (PDF) or simply enter your details manually. Our system accepts both, making it easy for everyone to get started.
+        </div>
+      </div>
+    </section>
+    <!-- Step 2 -->
+    <section class="step-section" id="step2" tabindex="-1" aria-labelledby="step2-title">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <span class="step-icon">📝</span>
+        <div class="step-title" id="step2-title">Paste a Job Description</div>
+        <div class="step-desc">
+          Copy and paste the job post or description from any company. This helps our AI understand exactly what the employer is looking for.
+        </div>
+      </div>
+    </section>
+    <!-- Step 3 -->
+    <section class="step-section" id="step3" tabindex="-1" aria-labelledby="step3-title">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <span class="step-icon">🤖</span>
+        <div class="step-title" id="step3-title">Get Tailored Resume</div>
+        <div class="step-desc">
+          Instantly receive a resume optimized to beat ATS (Applicant Tracking Systems) and AI filters. Our algorithms match your skills and experience to the job requirements.
+        </div>
+      </div>
+    </section>
+    <!-- Step 4 -->
+    <section class="step-section" id="step4" tabindex="-1" aria-labelledby="step4-title">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <span class="step-icon">🛠️</span>
+        <div class="step-title" id="step4-title">Review and Edit Results</div>
+        <div class="step-desc">
+          Preview your tailored resume. Make edits, add missing info, or tweak the content to fit your style. You’re always in control.
+        </div>
+      </div>
+    </section>
+    <!-- Step 5 -->
+    <section class="step-section" id="step5" tabindex="-1" aria-labelledby="step5-title">
+      <div class="step-number">5</div>
+      <div class="step-content">
+        <span class="step-icon">⬇️</span>
+        <div class="step-title" id="step5-title">Download or Use in Application</div>
+        <div class="step-desc">
+          Download your optimized resume as a PDF or use it directly in your job application. Stand out and get noticed by both AI and human recruiters!
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    // Sidebar highlight on scroll
+    const links = [
+      {id: 'toc-step1', section: 'step1'},
+      {id: 'toc-step2', section: 'step2'},
+      {id: 'toc-step3', section: 'step3'},
+      {id: 'toc-step4', section: 'step4'},
+      {id: 'toc-step5', section: 'step5'}
+    ];
+    function onScroll() {
+      let scrollPos = window.scrollY || window.pageYOffset;
+      let found = false;
+      for (let i = links.length - 1; i >= 0; i--) {
+        const sec = document.getElementById(links[i].section);
+        if (sec && sec.offsetTop - 120 <= scrollPos) {
+          links.forEach(l => document.getElementById(l.id).classList.remove('active'));
+          document.getElementById(links[i].id).classList.add('active');
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        links.forEach(l => document.getElementById(l.id).classList.remove('active'));
+      }
+    }
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('DOMContentLoaded', onScroll);
+  </script>
+  <script>
+    const PORT = 8000;
+    app.listen(PORT, () => {
+      console.log(`JobHackr AI backend running on http://localhost:${PORT}`);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JobHackr – Application Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Orbitron font for cyberpunk style -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <style>
+    html, body, input, textarea, button, .container, .output-panel {
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #0a001a;
+      color: #fff;
+      font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center; /* changed from flex-start to center */
+      min-height: 100vh;
+      padding: 0;
+      box-sizing: border-box;
+      flex: 1; /* allow body to fill viewport */
+    }
+    .container {
+      margin-top: 0; /* remove top margin */
+      margin-bottom: 0;
+      width: 100%;
+      max-width: 900px;
+      background: rgba(10,0,26,0.92);
+      border: 2px solid #00fff7;
+      border-radius: 2rem;
+      box-shadow: 0 0 32px #ff00ea88, 0 0 8px #00fff7;
+      padding: 2rem 1rem 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      backdrop-filter: blur(6px) saturate(1.2);
+      animation: fadeIn 1.2s cubic-bezier(.77,0,.18,1) both;
+      min-height: 70vh; /* increase for more vertical centering */
+      justify-content: center; /* center content inside container */
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(40px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    h1 {
+      font-size: 2rem;
+      color: #ff00ea;
+      letter-spacing: 0.04em;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      text-shadow:
+        0 0 8px #00fff7,
+        0 0 16px #ff00ea,
+        0 0 32px #00fff7,
+        0 0 64px #ff00ea;
+    }
+    label {
+      font-size: 1.1rem;
+      color: #00fff7;
+      margin-bottom: 0.5rem;
+      display: block;
+      letter-spacing: 0.03em;
+      text-shadow: 0 0 8px #00fff7cc;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem; /* tighter gap */
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      background: #14002a;
+      color: #fff;
+      font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+      font-size: 1.1rem;
+      border: 2px solid #00fff7;
+      border-radius: 1rem;
+      box-shadow: 0 0 12px #ff00ea44, 0 0 4px #00fff7;
+      padding: 0.7rem 1rem; /* less padding */
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s;
+      resize: vertical;
+      min-height: 90px;   /* smaller min-height */
+      max-height: 220px;  /* smaller max-height */
+      letter-spacing: 0.03em;
+      caret-color: #ff00ea;
+      margin-bottom: 0; /* remove margin */
+    }
+    textarea:focus, input[type="text"]:focus {
+      border: 2px solid #ff00ea;
+      box-shadow: 0 0 24px #ff00ea, 0 0 32px #00fff7;
+      background: #1a0033;
+    }
+    input[type="text"] {
+      min-height: 38px;
+      max-height: 48px;
+    }
+    .neon-btn {
+      display: inline-block;
+      width: 100%;
+      padding: 1.1rem 0;
+      font-size: 1.2rem;
+      color: #fff;
+      background: linear-gradient(90deg, #ff00ea 0%, #00fff7 100%);
+      border: none;
+      border-radius: 2rem;
+      box-shadow: 0 0 16px #ff00ea, 0 0 32px #00fff7;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      transition: transform 0.15s, box-shadow 0.15s;
+      outline: none;
+      margin-top: 0.5rem;
+    }
+    .neon-btn:focus, .neon-btn:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 32px #ff00ea, 0 0 64px #00fff7;
+    }
+    .output-panel {
+      margin-top: 1rem;
+      background: rgba(0,255,247,0.07);
+      border: 2px solid #00fff7cc;
+      border-radius: 1.2rem;
+      box-shadow: 0 0 16px #00fff788, 0 0 32px #ff00ea44;
+      min-height: 90px;
+      width: 100%; /* changed from min-width */
+      color: #fff;
+      font-size: 1.08rem;
+      padding: 0.9rem 0.8rem; /* less padding */
+      letter-spacing: 0.02em;
+      word-break: break-word;
+      transition: box-shadow 0.2s;
+      text-shadow: 0 0 8px #00fff7cc;
+      animation: fadeIn 1.2s cubic-bezier(.77,0,.18,1) both;
+    }
+    @media (max-width: 700px) {
+      .container { max-width: 98vw; padding: 1.2rem 0.5rem; }
+      h1 { font-size: 1.3rem; }
+      .output-panel { font-size: 0.98rem; }
+    }
+    /* Accessibility: focus ring for keyboard navigation */
+    .neon-btn:focus-visible, textarea:focus-visible, input[type="text"]:focus-visible {
+      outline: 2.5px solid #ff00ea;
+      outline-offset: 2px;
+    }
+    .output-panel[contenteditable="true"]:focus {
+      border: 2px solid #ff00ea;
+      box-shadow: 0 0 24px #ff00ea, 0 0 32px #00fff7;
+      background: #1a0033;
+    }
+  </style>
+</head>
+<body>
+  <main class="container" aria-label="JobHackr application generator">
+    <form id="generatorForm" autocomplete="off" aria-label="Application generator form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <!-- Top row: Name and Resume Upload side by side -->
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+        <div class="input-group" style="flex:1; min-width: 180px;">
+          <label for="userName">Your Name</label>
+          <input type="text" id="userName" name="userName" aria-label="Your name" autocomplete="off" />
+        </div>
+        <div class="input-group" style="flex:1; min-width: 180px;">
+          <label for="resumeUpload">Upload Resume (PDF only)</label>
+          <input type="file" id="resumeUpload" name="resumeUpload" accept="application/pdf" aria-label="Upload your resume as PDF" style="color:#fff; font-family:Orbitron,Segoe UI,Arial,sans-serif; background:#14002a; border:2px solid #00fff7; border-radius:1rem; padding:0.5rem;"/>
+          <span id="resumeFileName" style="color:#00fff7; font-size:0.95rem; margin-top:0.2rem; display:block;"></span>
+        </div>
+      </div>
+      <!-- Middle row: Job Post and Experience side by side -->
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+        <div class="input-group" style="flex:1; min-width: 220px;">
+          <label for="jobPost">Paste Job Post</label>
+          <textarea id="jobPost" name="jobPost" aria-label="Paste job post here"></textarea>
+        </div>
+        <div class="input-group" style="flex:1; min-width: 220px;">
+          <label for="userExperience">Your Experience</label>
+          <textarea id="userExperience" name="userExperience" aria-label="Describe your experience" placeholder="Describe your experience here..." style="min-height:90px;"></textarea>
+          <div id="experienceStatus" style="color:#00fff7; font-size:0.95rem; margin-top:0.2rem;"></div>
+        </div>
+      </div>
+      <!-- Tone, Style, and Truthfulness controls -->
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+        <div class="input-group" style="flex:1; min-width: 180px;">
+          <label for="toneSelect">Tone</label>
+          <select id="toneSelect" name="tone" style="background:#14002a; color:#00fff7; border:2px solid #00fff7; border-radius:1rem; padding:0.5rem; font-family:'Orbitron',Segoe UI,Arial,sans-serif;">
+            <option value="professional">Professional</option>
+            <option value="friendly">Friendly</option>
+            <option value="confident">Confident</option>
+            <option value="formal">Formal</option>
+            <option value="enthusiastic">Enthusiastic</option>
+          </select>
+        </div>
+        <div class="input-group" style="flex:1; min-width: 180px;">
+          <label for="styleSelect">Style</label>
+          <select id="styleSelect" name="style" style="background:#14002a; color:#00fff7; border:2px solid #00fff7; border-radius:1rem; padding:0.5rem; font-family:'Orbitron',Segoe UI,Arial,sans-serif;">
+            <option value="concise">Concise</option>
+            <option value="detailed">Detailed</option>
+            <option value="results">Results-Oriented</option>
+            <option value="storytelling">Storytelling</option>
+          </select>
+        </div>
+        <div class="input-group" style="flex:1; min-width: 180px;">
+          <label for="truthSlider">Truthfulness</label>
+          <input type="range" id="truthSlider" name="truthfulness" min="1" max="5" value="3" style="width:100%;">
+          <div style="display:flex; justify-content:space-between; font-size:0.95rem; color:#00fff7;">
+            <span>Realistic</span>
+            <span>Optimized</span>
+          </div>
+        </div>
+      </div>
+      <!-- Button centered below -->
+      <div style="display: flex; justify-content: center; margin-top: 0.5rem;">
+        <button type="submit" class="neon-btn" aria-label="Generate application" style="max-width: 320px; width: 100%;">Generate Application</button>
+      </div>
+      <!-- Output panel below everything -->
+      <section class="output-panel" id="outputPanel" aria-live="polite" aria-label="Generated application output" tabindex="0">
+        <!-- Generated application will appear here -->
+      </section>
+    </form>
+  </main>
+  <script>
+    // Demo generator logic (replace with real API call as needed)
+    document.getElementById('generatorForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('userName').value.trim();
+      const job = document.getElementById('jobPost').value.trim();
+      const output = document.getElementById('outputPanel');
+      if (!name || !job) {
+        output.textContent = "Please enter your name and paste a job post.";
+        return;
+      }
+      // Fake generation effect
+      output.innerHTML = "<span style='color:#00fff7;'>Generating application...</span>";
+      setTimeout(() => {
+        output.innerHTML = `<strong style="color:#ff00ea;">Dear Hiring Manager,</strong><br><br>
+        My name is <span style="color:#00fff7;">${name}</span> and I am excited to apply for this opportunity.<br><br>
+        <span style="color:#fff;">${job.length > 200 ? job.slice(0,200) + "..." : job}</span><br><br>
+        <span style="color:#00fff7;">Thank you for your consideration!</span>`;
+        output.focus();
+      }, 1200);
+    });
+  </script>
+</body>
+<!-- Add this inside generator.html, before </body> -->
+<script>
+  const form = document.getElementById('generatorForm');
+  const nameInput = document.getElementById('userName');
+  const jobInput = document.getElementById('jobPost');
+  const output = document.getElementById('outputPanel');
+  const resumeInput = document.getElementById('resumeUpload');
+  const resumeFileName = document.getElementById('resumeFileName');
+  const experienceInput = document.getElementById('userExperience');
+  const experienceStatus = document.getElementById('experienceStatus');
+
+  // Error message setup (as before)
+  let errorMsg = document.createElement('div');
+  errorMsg.setAttribute('role', 'alert');
+  errorMsg.style.display = 'none';
+  errorMsg.style.margin = '0.5rem 0 0.5rem 0';
+  errorMsg.style.fontSize = '1rem';
+  errorMsg.style.fontFamily = 'Orbitron, Segoe UI, Arial, sans-serif';
+  errorMsg.style.color = '#ff00ea';
+  errorMsg.style.textShadow = '0 0 8px #ff00ea, 0 0 16px #00fff7';
+  errorMsg.style.transition = 'opacity 0.3s';
+  errorMsg.style.opacity = '0.95';
+  form.insertBefore(errorMsg, form.firstChild);
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+    errorMsg.style.animation = 'glowError 0.7s cubic-bezier(.77,0,.18,1)';
+    setTimeout(() => { errorMsg.style.animation = ''; }, 700);
+  }
+  function hideError() {
+    errorMsg.style.display = 'none';
+  }
+
+  // Neon error animation
+  const style = document.createElement('style');
+  style.innerHTML = `
+    @keyframes glowError {
+      0% { text-shadow: 0 0 0 #ff00ea, 0 0 0 #00fff7; }
+      50% { text-shadow: 0 0 16px #ff00ea, 0 0 32px #00fff7; }
+      100% { text-shadow: 0 0 8px #ff00ea, 0 0 16px #00fff7; }
+    }
+    @keyframes neonPulse {
+      0% { opacity: 0.7; }
+      50% { opacity: 1; text-shadow: 0 0 24px #00fff7, 0 0 48px #ff00ea; }
+      100% { opacity: 0.7; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Resume file handling
+  resumeInput.addEventListener('change', function() {
+    if (resumeInput.files.length > 0) {
+      const file = resumeInput.files[0];
+      if (file.type !== "application/pdf") {
+        showError("Only PDF files are allowed for resume upload.");
+        resumeInput.value = "";
+        resumeFileName.textContent = "";
+      } else {
+        resumeFileName.textContent = "Selected: " + file.name;
+        hideError();
+      }
+    } else {
+      resumeFileName.textContent = "";
+    }
+  });
+
+  // Experience textarea feedback
+  experienceInput.addEventListener('input', function() {
+    if (experienceInput.value.trim().length > 0) {
+      experienceStatus.textContent = "Experience noted.";
+    } else {
+      experienceStatus.textContent = "";
+    }
+  });
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    hideError();
+    const name = nameInput.value.trim();
+    const job = jobInput.value.trim();
+    const experience = experienceInput.value.trim();
+    let resumeFile = resumeInput.files[0];
+
+    if (!name || !job) {
+      showError('Please enter your name and paste a job post.');
+      output.innerHTML = '';
+      return;
+    }
+    if (resumeFile && resumeFile.type !== "application/pdf") {
+      showError("Only PDF files are allowed for resume upload.");
+      output.innerHTML = '';
+      return;
+    }
+
+    output.innerHTML = `<span style="
+      color:#00fff7;
+      font-weight:bold;
+      font-size:1.1rem;
+      text-shadow:0 0 16px #00fff7,0 0 32px #ff00ea;
+      animation: neonPulse 1.2s infinite;
+      display:inline-block;
+    ">⚡ Generating...</span>`;
+
+    fetch('http://localhost:3001/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        jobPost: job,
+        experience
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.result) {
+          output.innerHTML = `<div style="white-space:pre-line;">${data.result}</div>`;
+          output.focus();
+        } else {
+          showError('AI failed to generate application.');
+          output.innerHTML = '';
+        }
+      })
+      .catch(() => {
+        showError('Could not connect to AI backend.');
+        output.innerHTML = '';
+      });
+  });
+
+  // Optional: Hide error on input
+  [nameInput, jobInput, experienceInput].forEach(el => {
+    el.addEventListener('input', hideError);
+  });
+
+  function extractKeywords(text) {
+    // Simple keyword extraction: split by non-word, filter out short/common words
+    const stopwords = ['the','and','for','with','you','are','that','this','from','your','will','have','all','not','but','can','our','job','role','as','in','to','of','a','on','at','by','an','is','be','or','we','it','if','so','do','may','any','who','their','they','has','must','should','more','about','work','skills','requirements','responsibilities'];
+    return Array.from(
+      new Set(
+        text
+          .toLowerCase()
+          .match(/\b[a-z]{3,}\b/g) // words with 3+ letters
+          ?.filter(word => !stopwords.includes(word)) || []
+      )
+    );
+  }
+
+  const jobPostArea = document.getElementById('jobPost');
+  const experienceArea = document.getElementById('userExperience');
+  const keywordSection = document.getElementById('keywordSection');
+  const missingKeywords = document.getElementById('missingKeywords');
+
+  function updateKeywords() {
+    const jobText = jobPostArea.value;
+    const expText = experienceArea.value;
+    const jobKeywords = extractKeywords(jobText);
+    const expKeywords = extractKeywords(expText);
+
+    // Show keywords from job post
+    if (jobKeywords.length) {
+      keywordSection.innerHTML = `<strong>Job Keywords:</strong> ${jobKeywords.map(k => `<span style="background:#00fff733; color:#ff00ea; border-radius:0.5em; padding:0.1em 0.5em; margin:0 0.2em;">${k}</span>`).join(' ')}`;
+    } else {
+      keywordSection.innerHTML = '';
+    }
+
+    // Show missing keywords
+    if (jobKeywords.length && expText.length) {
+      const missing = jobKeywords.filter(k => !expKeywords.includes(k));
+      if (missing.length) {
+        missingKeywords.innerHTML = `<strong>Missing from your experience:</strong> ${missing.map(k => `<span style="background:#ff00ea33; color:#00fff7; border-radius:0.5em; padding:0.1em 0.5em; margin:0 0.2em;">${k}</span>`).join(' ')}`;
+      } else {
+        missingKeywords.innerHTML = `<span style="color:#00ffb7;">Great! Your experience covers all main keywords.</span>`;
+      }
+    } else {
+      missingKeywords.innerHTML = '';
+    }
+  }
+
+  jobPostArea.addEventListener('input', updateKeywords);
+  experienceArea.addEventListener('input', updateKeywords);
+</script>
+<!-- Add this after <body> in each file -->
+<nav style="
+  position: fixed;
+  top: 0; left: 0; width: 100vw; z-index: 1000;
+  background: rgba(10,0,26,0.96);
+  border-bottom: 2px solid #00fff7;
+  box-shadow: 0 0 16px #ff00ea44, 0 0 8px #00fff7;
+  display: flex; gap: 2rem; align-items: center; justify-content: center;
+  padding: 0.7rem 0 0.5rem 0;
+  font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+">
+  <a href="index.html" style="color:#ff00ea; text-decoration:none; font-weight:700; font-size:1.1rem; letter-spacing:0.04em; margin-right:1.5rem;">JobHackr</a>
+  <a href="generator.html" style="color:#00fff7; text-decoration:none; font-size:1.05rem; margin-right:1.2rem;">Generator</a>
+  <a href="how-it-works.html" style="color:#00fff7; text-decoration:none; font-size:1.05rem;">How It Works</a>
+</nav>
+<div style="height: 3.2rem;"></div> <!-- Spacer for nav -->
+<script>
+  const outputPanel = document.getElementById('outputPanel');
+  const copyBtn = document.getElementById('copyBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+
+  copyBtn.addEventListener('click', () => {
+    // Remove HTML tags for copying as plain text
+    const text = outputPanel.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => { copyBtn.textContent = "Copy"; }, 1200);
+    });
+  });
+
+  downloadBtn.addEventListener('click', () => {
+    const text = outputPanel.innerText;
+    const blob = new Blob([text], {type: "text/plain"});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = "application.txt";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+</script>
+<script>
+  const PORT = 8000;
+  app.listen(PORT, () => {
+    console.log(`JobHackr AI backend running on http://localhost:${PORT}`);
+  });
+</script>

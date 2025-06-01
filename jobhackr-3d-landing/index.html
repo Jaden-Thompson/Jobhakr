@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JobHackr – Hack Your Next Job Application</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Orbitron font for cyberpunk style -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #0a001a;
+      color: #fff;
+      font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+      overflow: hidden;
+    }
+    body {
+      min-height: 100vh;
+      min-width: 100vw;
+      position: relative;
+    }
+    /* Neon grid background */
+    .neon-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+    }
+    /* Glitch scanline overlay */
+    .scanlines {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.03) 0px,
+        rgba(255,255,255,0.03) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+      mix-blend-mode: lighten;
+      animation: scanmove 2s linear infinite;
+    }
+    @keyframes scanmove {
+      0% { background-position-y: 0; }
+      100% { background-position-y: 4px; }
+    }
+    /* Hero section */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      pointer-events: none;
+    }
+    .hero {
+      background: rgba(10,0,26,0.85);
+      border: 2px solid #00fff7;
+      border-radius: 2rem;
+      box-shadow: 0 0 32px #ff00ea88, 0 0 8px #00fff7;
+      padding: 3rem 2rem;
+      max-width: 480px;
+      margin: 0 auto;
+      text-align: center;
+      pointer-events: auto;
+      backdrop-filter: blur(6px) saturate(1.2);
+      animation: fadeIn 1.2s cubic-bezier(.77,0,.18,1) both;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(40px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .headline {
+      font-size: 2.2rem;
+      color: #ff00ea;
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+      text-shadow:
+        0 0 8px #00fff7,
+        0 0 16px #ff00ea,
+        0 0 32px #00fff7,
+        0 0 64px #ff00ea;
+    }
+    .subheadline {
+      font-size: 1.1rem;
+      color: #00fff7;
+      font-weight: 400;
+      margin-bottom: 2.5rem;
+      text-shadow: 0 0 8px #00fff7cc;
+    }
+    .neon-btn {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      font-size: 1.15rem;
+      color: #fff;
+      background: linear-gradient(90deg, #ff00ea 0%, #00fff7 100%);
+      border: none;
+      border-radius: 2rem;
+      box-shadow: 0 0 16px #ff00ea, 0 0 32px #00fff7;
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      transition: transform 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+    .neon-btn:focus, .neon-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 32px #ff00ea, 0 0 64px #00fff7;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .hero { padding: 2rem 0.5rem; }
+      .headline { font-size: 1.3rem; }
+    }
+    /* Simple floating panels and particles */
+    .holo-panel {
+      position: absolute;
+      z-index: 1;
+      border: 1.5px solid #00fff7cc;
+      border-radius: 1rem;
+      background: rgba(0,255,247,0.07);
+      box-shadow: 0 0 16px #00fff788, 0 0 32px #ff00ea44;
+      width: 120px;
+      height: 60px;
+      left: 10vw;
+      top: 18vh;
+      transform: rotate(-8deg);
+      animation: float1 4s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    .holo-panel2 {
+      left: 70vw;
+      top: 60vh;
+      width: 100px;
+      height: 50px;
+      animation: float2 5s ease-in-out infinite alternate;
+      transform: rotate(12deg);
+    }
+    @keyframes float1 {
+      from { transform: translateY(0) rotate(-8deg);}
+      to { transform: translateY(20px) rotate(-8deg);}
+    }
+    @keyframes float2 {
+      from { transform: translateY(0) rotate(12deg);}
+      to { transform: translateY(-18px) rotate(12deg);}
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: #ff00ea;
+      width: 8px; height: 8px;
+      opacity: 0.7;
+      filter: blur(1px);
+      animation: particleMove 3s linear infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .particle2 {
+      background: #00fff7;
+      width: 5px; height: 5px;
+      left: 80vw; top: 20vh;
+      animation-duration: 2.2s;
+    }
+    @keyframes particleMove {
+      0% { transform: translateY(0);}
+      100% { transform: translateY(-60px);}
+    }
+    /* Interactive neon cursor */
+    .neon-cursor {
+      pointer-events: none;
+      position: fixed;
+      z-index: 100;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 2px solid #00fff7;
+      box-shadow: 0 0 16px #ff00ea, 0 0 32px #00fff7;
+      mix-blend-mode: lighten;
+      transition: transform 0.08s cubic-bezier(.77,0,.18,1);
+      transform: translate(-50%, -50%) scale(1);
+      background: rgba(255,0,234,0.08);
+      will-change: transform;
+    }
+  </style>
+</head>
+<body>
+  <!-- Add this at the very top of <body> -->
+  <nav style="
+    position: fixed;
+    top: 0; left: 0; width: 100vw; z-index: 1000;
+    background: rgba(10,0,26,0.96);
+    border-bottom: 2px solid #00fff7;
+    box-shadow: 0 0 16px #ff00ea44, 0 0 8px #00fff7;
+    display: flex; gap: 2rem; align-items: center; justify-content: center;
+    padding: 0.7rem 0 0.5rem 0;
+    font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+  ">
+    <a href="index.html" style="color:#ff00ea; text-decoration:none; font-weight:700; font-size:1.1rem; letter-spacing:0.04em; margin-right:1.5rem;">JobHackr</a>
+    <a href="generator.html" style="color:#00fff7; text-decoration:none; font-size:1.05rem; margin-right:1.2rem;">Generator</a>
+    <a href="how-it-works.html" style="color:#00fff7; text-decoration:none; font-size:1.05rem;">How It Works</a>
+  </nav>
+  <div style="height: 3.2rem;"></div> <!-- Spacer for nav -->
+  <!-- Neon grid background using SVG -->
+  <svg class="neon-grid" width="100%" height="100%">
+    <defs>
+      <linearGradient id="gridglow" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#00fff7" stop-opacity="0.7"/>
+        <stop offset="100%" stop-color="#ff00ea" stop-opacity="0.5"/>
+      </linearGradient>
+    </defs>
+    <g>
+      <!-- Vertical lines -->
+      <g>
+        <line x1="10%" y1="0" x2="10%" y2="100%" stroke="url(#gridglow)" stroke-width="2"/>
+        <line x1="30%" y1="0" x2="30%" y2="100%" stroke="url(#gridglow)" stroke-width="2"/>
+        <line x1="50%" y1="0" x2="50%" y2="100%" stroke="url(#gridglow)" stroke-width="2"/>
+        <line x1="70%" y1="0" x2="70%" y2="100%" stroke="url(#gridglow)" stroke-width="2"/>
+        <line x1="90%" y1="0" x2="90%" y2="100%" stroke="url(#gridglow)" stroke-width="2"/>
+      </g>
+      <!-- Horizontal lines -->
+      <g>
+        <line x1="0" y1="20%" x2="100%" y2="20%" stroke="url(#gridglow)" stroke-width="2"/>
+        <line x1="0" y1="40%" x2="100%" y2="40%" stroke="url(#gridglow)" stroke-width="2"/>
+        <line x1="0" y1="60%" x2="100%" y2="60%" stroke="url(#gridglow)" stroke-width="2"/>
+        <line x1="0" y1="80%" x2="100%" y2="80%" stroke="url(#gridglow)" stroke-width="2"/>
+      </g>
+    </g>
+  </svg>
+  <!-- Holographic panels -->
+  <div class="holo-panel"></div>
+  <div class="holo-panel holo-panel2"></div>
+  <!-- Particles -->
+  <div class="particle" style="left:20vw;top:70vh;"></div>
+  <div class="particle particle2"></div>
+  <!-- Scanline effect -->
+  <div class="scanlines"></div>
+  <!-- Overlay hero section -->
+  <div class="overlay">
+    <main class="hero" aria-label="JobHackr hero section">
+      <h1 class="headline">Hack Your Next Job Application</h1>
+      <h2 class="subheadline">Paste a job post — get the perfect response in seconds</h2>
+      <a href="generator.html" class="neon-btn" aria-label="Start generating your application">Get Started</a>
+    </main>
+  </div>
+  <!-- Neon cursor -->
+  <div class="neon-cursor" id="neonCursor"></div>
+  <script>
+    // Neon cursor effect
+    const cursor = document.getElementById('neonCursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.transform = `translate(${e.clientX}px,${e.clientY}px) scale(1)`;
+    });
+    document.addEventListener('mousedown', () => {
+      cursor.style.transform += ' scale(0.8)';
+    });
+    document.addEventListener('mouseup', () => {
+      cursor.style.transform = cursor.style.transform.replace(' scale(0.8)', ' scale(1)');
+    });
+  </script>
+</body>
+</html>
+const PORT = 8000;
+app.listen(PORT, () => {
+  console.log(`JobHackr AI backend running on http://localhost:${PORT}`);
+});
